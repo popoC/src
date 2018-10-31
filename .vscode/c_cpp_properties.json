@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/po/catkin_ws/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/po/catkin_ws/src/dynamixel-workbench/dynamixel_workbench_controllers/include",
+                "/home/po/catkin_ws/src/dynamixel-workbench/dynamixel_workbench_single_manager/include",
+                "/home/po/catkin_ws/src/dynamixel-workbench/dynamixel_workbench_single_manager_gui/include",
+                "/home/po/catkin_ws/src/dynamixel-workbench/dynamixel_workbench_toolbox/include",
+                "/home/po/catkin_ws/src/opencv_po_tx1/include",
+                "/home/po/catkin_ws/src/opencvtest/include",
+                "/home/po/catkin_ws/src/po_dynamixel_2/include",
+                "/home/po/catkin_ws/src/po_ps4_step_motor/include",
+                "/home/po/catkin_ws/src/usb_cam/include",
+                "/usr/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

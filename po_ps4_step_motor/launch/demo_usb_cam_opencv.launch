@@ -1,0 +1,15 @@
+<!-- usb_cam_opencv.launch-->
+<launch>
+   <!-- USB camera -->
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam">
+  <param name="video_device" value="/dev/video1" />
+  <param name="image_width" value = "1920"   />
+  <param name="image_height" value = "1080"   />
+  <param name="pixel_format" value = "mjpeg"   />
+  </node>
+  
+  <!-- image overlay node -->
+  <node pkg="opencv_po_tx1" type="demo_opencv_overlay" name="demo_img_overlay" output="screen">
+  </node>
+  
+</launch>
