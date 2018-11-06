@@ -3,7 +3,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
+#include <time.h>
 #include <sensor_msgs/image_encodings.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/String.h>
@@ -342,8 +342,24 @@ void camShift(Mat inImg)
    do_calibration = 1;
       break;
   case 'w':
-  imwrite("/home/po/Npget.jpg",image);
-    ROS_INFO("Press s key save jpg");//break;
+      time_t t;
+      t = time(0);
+      char file_name_buff[80];
+      struct tm * now;
+      now = localtime(&t);
+
+      strftime(file_name_buff,80,"/home/po/image/%m_%d_%H_%M_%S.jpg", now);
+
+      imwrite(file_name_buff,image);
+
+
+      putText(image,file_name_buff,Point(image.cols/2,image.rows/2-10),  FONT_HERSHEY_COMPLEX_SMALL , 1,cv::Scalar(0,200,100));
+      imshow( "CamShift Demo", image );
+      //putText(image,"file_name_buff",Point(image.cols/3,image.rows/3-10),  FONT_HERSHEY_COMPLEX_SMALL , 1,cv::Scalar(0,200,100));
+      if(cvWaitKey(3000)=='y'){  
+
+      }
+      //ROS_INFO("Press s key save jpg");//break;
       break;
   case 'f':
     ROS_INFO("Press f key");//break;

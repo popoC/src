@@ -1,3 +1,6 @@
 {
-    "ros.distro": "kinetic"
+    "ros.distro": "kinetic",
+    "files.associations": {
+        "chrono": "cpp"
+    }
 }
