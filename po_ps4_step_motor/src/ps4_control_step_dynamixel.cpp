@@ -239,7 +239,7 @@ void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
      ros::Duration(1.0).sleep();
 
      M_32_array.data.clear();
-     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(-1*path_2);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
+     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(-1*path_2);M_32_array.data.push_back(0);
      M_32_array.data.push_back(8);   pub_set_step_Motor.publish(M_32_array);
 
      ros::Duration(0.5).sleep();

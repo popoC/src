@@ -405,7 +405,7 @@ void camShift(Mat inImg)
   break;
   case '5':
     stringstream_ss.str("");
-    stringstream_ss << M4_pos;
+    stringstream_ss << M5_pos;
 
     ROS_INFO("set back_down Press 5 key");//break;
     set_dynamixel_msg.data = "set_back_down = "+stringstream_ss.str();
@@ -414,7 +414,7 @@ void camShift(Mat inImg)
   break;
   case '6':
     stringstream_ss.str("");
-    stringstream_ss << M4_pos;
+    stringstream_ss << M5_pos;
   
     ROS_INFO("set back_up Press 6 key");//break;
     set_dynamixel_msg.data = "set_back_up = "+stringstream_ss.str();
@@ -422,7 +422,7 @@ void camShift(Mat inImg)
   break;
   case '7':
     stringstream_ss.str("");
-    stringstream_ss << M4_pos;
+    stringstream_ss << M5_pos;
   
     ROS_INFO("set front_down Press 7 key");//break;
     set_dynamixel_msg.data = "set_front_down = "+stringstream_ss.str();
