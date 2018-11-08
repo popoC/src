@@ -331,6 +331,7 @@ void camShift(Mat inImg)
 
 
   imshow( "CamShift Demo", image );
+  
 
   char c = (char)waitKey(1);
   if( c == 27 )
@@ -670,9 +671,39 @@ int main(int argc, char **argv)
 
 
 
+
+   // std::string video_node = "usb_cam/image_raw";
+
     ros::init(argc, argv, "image_processor");
-//    ROS_INFO("-----------------");
     ros::NodeHandle nh;
+
+
+    std::string video_node ; 
+    int iii = 0;
+
+    if(nh.getParam("/Graphical_User_Interface_1/video_node",video_node))
+    {
+      ROS_INFO("get %s",video_node.c_str());
+    }
+   else{
+     video_node = "usb_cam/image_raw"; 
+     ROS_INFO("video_node = usb_cam/image_raw");
+   }
+    if(nh.getParam("/Graphical_User_Interface_1/ime_w",iii))
+    {
+      ROS_INFO("get %i",iii);
+    }
+   else{
+     ROS_ERROR("------ii");
+   }
+
+
+
+    ROS_INFO("get %s",video_node.c_str());
+    ROS_INFO("-----------------");
+   // ROS_INFO("get %s",video_node.c_str());
+   //return(0);
+
     //Create an ImageTransport instance, initializing it with our NodeHandle.
     image_transport::ImageTransport it(nh);
 	namedWindow( "CamShift Demo", CV_WINDOW_AUTOSIZE );
@@ -685,7 +716,11 @@ int main(int argc, char **argv)
 	*/
     
     //image_transport::Publisher image_pub_;
-   image_transport::Subscriber sub = it.subscribe("usb_cam/image_raw", 1, imageCallback);
+  // image_transport::Subscriber sub = it.subscribe("usb_cam/image_raw", 1, imageCallback);
+   image_transport::Subscriber sub = it.subscribe(video_node, 1, imageCallback);
+
+
+
 
  //   image_transport::Subscriber sub = it.subscribe("/camera_array/cam0/image_raw", 1, imageCallback);
 

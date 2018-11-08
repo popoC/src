@@ -122,7 +122,7 @@ void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
        int path_1;   
         path_1 = (Back_down - Back_up)/4;
      M_32_array.data.clear();
-     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_1);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
+     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_1);M_32_array.data.push_back(0);
      M_32_array.data.push_back(4);   pub_set_step_Motor.publish(M_32_array);
 
     }
@@ -216,7 +216,7 @@ void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
      ros::Duration(1.0).sleep();
      
      M_32_array.data.clear();
-     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_1);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
+     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_1);M_32_array.data.push_back(0);
      M_32_array.data.push_back(8);   pub_set_step_Motor.publish(M_32_array);
      
      ros::Duration(1.0).sleep();
@@ -228,7 +228,7 @@ void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
      ros::Duration(0.5).sleep();
      
      M_32_array.data.clear();
-     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_2);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
+     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(path_2);M_32_array.data.push_back(0);
      M_32_array.data.push_back(8);   pub_set_step_Motor.publish(M_32_array);
 
      ros::Duration(1.0).sleep();
@@ -287,10 +287,11 @@ void TeleopStep::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
             //(joy->axes[6]) = -1    -> 
             //(joy->axes[7]) = 1   方向 上
             //(joy->axes[7]) = -1  方向 下
-            //(joy->buttons[0]) = 1    正方形
-            //(joy->buttons[1]) = 1    X
-            //(joy->buttons[2]) = 1    O
-            //(joy->buttons[3]) = 1    三角形
+
+            //(joy->buttons[1]) = 1    O
+            //(joy->buttons[3]) = 1    正方形
+            //(joy->buttons[0]) = 1    X
+            //(joy->buttons[2]) = 1    三角形
             //(joy->buttons[4]) = 1    左上
             //(joy->buttons[5]) = 1    右上
             
@@ -300,10 +301,10 @@ void TeleopStep::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
      M1 = joy->axes[0]*5;
      M2 = joy->axes[1]*5;
       
-    M6 = joy->buttons[1] - (joy->buttons[3]);
-    M4 = joy->axes[7];
-    M5 = joy->axes[6];
-    M3 = joy->buttons[2] - (joy->buttons[0]);
+   // M3 = joy->buttons[1] - (joy->buttons[3]);
+   // M4 = joy->axes[6];
+    M5 = joy->axes[7];
+    M6 = joy->buttons[2] - (joy->buttons[0]);
     
 //    std_msgs::UInt16 button_press;
 //    button_press.data = (joy->buttons[1]);// x
