@@ -19,6 +19,8 @@ static Point o_end;
 
 static Rect selection;
 
+
+
 int counter = 100;
 int show_H = 0;
 std_msgs::Int32MultiArray M_array;
