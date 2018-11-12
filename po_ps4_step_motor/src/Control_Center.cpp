@@ -9,89 +9,39 @@
 #include <stdio.h>
 #include <signal.h>
 
-class TeleopStep
+void catch_ctrl_C(int sig);
+void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
+void set_dynamixelCallback(const std_msgs::String::ConstPtr& msg);
+
+dynamixel_workbench_msgs::JointCommand joint_command;
+
+
+
+
+ros::Publisher vel_pub_1;
+ros::Publisher pub_set_step_Motor;
+        
+ros::Subscriber joy_sub_;
+ros::Subscriber set_dynamixel_sub;
+ros::ServiceClient joint_command_client;
+        
+
+int M_SPEED;
+int M_Dynamixel_position,M_Dynamixel_position_2;
+int M1,M2,M3,M4,M5,M6;
+int D_Front, D_Back, D_Front_m2, D_Back_m2, Back_down, Back_up, Front_down;
+        
+FILE *fp;
+
+void Control_center_init()
 {
+
+        
+}
     
-    public:
-        TeleopStep();
-       
-    private:
-        
-        void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
-        void set_dynamixelCallback(const std_msgs::String::ConstPtr& msg);
-        dynamixel_workbench_msgs::JointCommand joint_command;
-        
-        ros::NodeHandle nh_;
-        
-        int linear_,angular_;
-        double l_scale_, a_scale_;
-        
-        ros::Publisher vel_pub_1;
-        ros::Publisher pub_set_step_Motor;
-        
-        ros::Subscriber joy_sub_;
-        ros::Subscriber set_dynamixel_sub;
-        
-        ros::ServiceClient joint_command_client = nh_.serviceClient<dynamixel_workbench_msgs::JointCommand>("joint_command");
-
-        int M_SPEED;
-        int M_Dynamixel_position,M_Dynamixel_position_2;
-        int M1,M2,M3,M4,M5,M6;
-        
-        int D_Front;
-        int D_Back;
-        int D_Front_m2;
-        int D_Back_m2;
-        int Back_down;
-        int Back_up;
-        int Front_down;
-        
-        
-        FILE *fp;
-        
-};
-
-
-TeleopStep::TeleopStep():
-    linear_(1),
-    angular_(2)
-    {
-   //     nh_.param("axis_linear", linear_, linear_);   //-- 初始化參數設定
-        nh_.param("axis_linear", linear_, linear_);
-        nh_.param("axis_angular", angular_, angular_);
-        nh_.param("scale_angular", a_scale_, a_scale_);
-        nh_.param("scale_linear",l_scale_,l_scale_);
-
-        vel_pub_1 = nh_.advertise<std_msgs::Int16MultiArray>("step_Motor",100); //--  (,) 第一個參數為發布的話題第二個為發布序列的大小(緩存)，如果超過就丟棄
-        
-        joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 100, &TeleopStep::joyCallback, this);//-- 訂閱搖桿訊息
-        set_dynamixel_sub = nh_.subscribe<std_msgs::String>("set_dynamixel", 100, &TeleopStep::set_dynamixelCallback, this);//-- 訂閱設定訊息
-        
-        pub_set_step_Motor = nh_.advertise<std_msgs::Int32MultiArray>("step_Motor_control",100); //--  (,) 第一個參數為發布的話題第二個為發布序列的大小(緩存)，如果超過就丟棄
-
-        
-        
-        M_SPEED = 1;
-        M_Dynamixel_position = 0;
-        M_Dynamixel_position_2 = 200;
-        
-        
-        joint_command.request.unit = "raw";
-        joint_command.request.id = 1;
-
-        M1 = 0;M2 = 0;M3 = 0;M4 = 0;M5 = 0;M6 = 0;
-        fp = fopen("/home/po/set_conf.txt","r");
-        fscanf(fp,"%d %d %d %d %d %d %d",&D_Front,&D_Back,&D_Front_m2,&D_Back_m2,&Back_down,&Back_up,&Front_down);
-        fclose(fp);
-        
-        M_Dynamixel_position = D_Back;
-        M_Dynamixel_position_2 = D_Back_m2;
-    }
-    
-void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
+void set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
 {
-   
-    std_msgs::Int32MultiArray M_32_array;
+   std_msgs::Int32MultiArray M_32_array;
 
    ROS_INFO("I heard: [%s]", msg->data.c_str());  
     if(strcmp(msg->data.c_str(),"go_front") == 0){
@@ -249,23 +199,13 @@ void TeleopStep::set_dynamixelCallback(const std_msgs::String::ConstPtr& msg)
      joint_command.request.id = 1;
      joint_command.request.goal_position = D_Back;
      joint_command_client.call(joint_command);
-    /*    
-     ros::Duration(0.5).sleep();
-
-     M_32_array.data.clear();
-     M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(-1*path_1);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
-     M_32_array.data.push_back(4);   pub_set_step_Motor.publish(M_32_array);
-      */  
     }
-
  
 }    
 
-void TeleopStep::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
+void joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
-    
     std_msgs::Int16MultiArray M_array;
-    
     M_array.data.clear();
 
     if(joy->buttons[5] == 1)M_SPEED*=2;
@@ -282,94 +222,81 @@ void TeleopStep::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
         joint_command.request.goal_position = M_Dynamixel_position;
         joint_command_client.call(joint_command);
     }
-    
-            //(joy->axes[6]) = 1    <-
-            //(joy->axes[6]) = -1    -> 
-            //(joy->axes[7]) = 1   方向 上
-            //(joy->axes[7]) = -1  方向 下
-
-            //(joy->buttons[1]) = 1    O
-            //(joy->buttons[3]) = 1    正方形
-            //(joy->buttons[0]) = 1    X
-            //(joy->buttons[2]) = 1    三角形
-            //(joy->buttons[4]) = 1    左上
-            //(joy->buttons[5]) = 1    右上
-            
-            //(joy->axes[0]) = 1    <-o  左
-            //(joy->axes[0]) = -1   o->  左
+            //(joy->axes[6]) = 1    <-            //(joy->axes[6]) = -1    -> 
+            //(joy->axes[7]) = 1   方向 上            //(joy->axes[7]) = -1  方向 下
+            //(joy->buttons[1]) = 1    O            //(joy->buttons[3]) = 1    正方形
+            //(joy->buttons[0]) = 1    X            //(joy->buttons[2]) = 1    三角形
+            //(joy->buttons[4]) = 1    左上            //(joy->buttons[5]) = 1    右上
+            //(joy->axes[0]) = 1    <-o  左            //(joy->axes[0]) = -1   o->  左
     
      M1 = joy->axes[0]*5;
-     M2 = joy->axes[1]*5;
-     // M3 = joy->buttons[1] - (joy->buttons[3]);
-     // M4 = joy->axes[6];
+     M2 = joy->axes[1]*5;     // M3 = joy->buttons[1] - (joy->buttons[3]);     // M4 = joy->axes[6];
      M5 = joy->axes[7];
      M6 = joy->buttons[2] - (joy->buttons[0]);
-//    std_msgs::UInt16 button_press;
-//    button_press.data = (joy->buttons[1]);// x
-    M_array.data.push_back(M1); //-10~10
-    M_array.data.push_back(M2); //-10~10
-    M_array.data.push_back(M3); //-10~10
-    M_array.data.push_back(M4); //-10~10
-    M_array.data.push_back(M5); //-10~10
-    M_array.data.push_back(M6); //-10~10
+
+    M_array.data.push_back(M1);  M_array.data.push_back(M2);   M_array.data.push_back(M3); //-10~10
+    M_array.data.push_back(M4);  M_array.data.push_back(M5);   M_array.data.push_back(M6); //-10~10
     M_array.data.push_back(M_SPEED); //-10~10
-    M_array.data.push_back(joy->buttons[8]);
-    M_array.data.push_back(joy->buttons[9]);
-    M_array.data.push_back(joy->buttons[10]);
+    M_array.data.push_back(joy->buttons[8]);    M_array.data.push_back(joy->buttons[9]);    M_array.data.push_back(joy->buttons[10]);
     
     vel_pub_1.publish(M_array);
     
-    //ROS_INFO("ps4:[%d]:[%d]:[%d]:[%d]:[%d]:[%d]",_step_M1.data,_step_M2.data,_step_M3.data,_step_M4.data,_step_M5.data,_step_M6.data);
-    //ros::Duration(0.5).sleep();
-    
-    /*
-      joint_command.request.unit = "raw";
-      joint_command.request.id = 1;
-      joint_command.request.goal_position = M_SPEED*50;
-      joint_command_client.call(joint_command);
-      */
-/*
-   if (joint_command_client.call(joint_command))
-  {
-    if (joint_command.response.result)
-      ROS_INFO("Succeed to write goal_position");
-    else
-      ROS_WARN("Failed to write goal_position");
-  }
-  else
-  {
-    ROS_ERROR("Failed to call service /joint_command");
-  }
-  */  
+      
 }
     
     
 void catch_ctrl_C(int sig)
 {
 
-    ROS_INFO("~~~CTRL + C ~~~~~");
-     
-    
+    ROS_INFO("~~~ --ppCTRL + ---C ~~~~~");
+         
      //ros::Publisher pub_set_step_Motor;
-    /* 
+     
      std_msgs::Int32MultiArray M_32_array;
      M_32_array.data.clear();
      M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
      M_32_array.data.push_back(0);M_32_array.data.push_back(0);M_32_array.data.push_back(0);
      M_32_array.data.push_back(99); 
-     
+
      pub_set_step_Motor.publish(M_32_array);
-    */
+    
     ros::shutdown();
 }
 
 int main(int argc,char** argv)
 {
     ros::init(argc,argv,"teleop_step_N");
-    TeleopStep teleop_step;
-  
-    signal(SIGINT,  catch_ctrl_C);
-    
+    ros::NodeHandle nh;
+
+    signal(SIGINT, catch_ctrl_C);
+
+            vel_pub_1 = nh.advertise<std_msgs::Int16MultiArray>("step_Motor",100); //--  (,) 第一個參數為發布的話題第二個為發布序列的大小(緩存)，如果超過就丟棄
+   pub_set_step_Motor = nh.advertise<std_msgs::Int32MultiArray>("step_Motor_control",100); //--  (,) 第一個參數為發布的話題第二個為發布序列的大小(緩存)，如果超過就丟棄
+        
+   joy_sub_ = nh.subscribe<sensor_msgs::Joy>("joy", 100, joyCallback);//-- 訂閱搖桿訊息
+   set_dynamixel_sub = nh.subscribe<std_msgs::String>("set_dynamixel", 100, set_dynamixelCallback);//-- 訂閱設定訊息
+        
+   joint_command_client = nh.serviceClient<dynamixel_workbench_msgs::JointCommand>("joint_command");
+
+
+        ROS_INFO("----uuu------");
+        M_SPEED = 1;
+        M_Dynamixel_position = 0;
+        M_Dynamixel_position_2 = 200;
+        
+        joint_command.request.unit = "raw";
+        joint_command.request.id = 1;
+
+        M1 = 0;M2 = 0;M3 = 0;M4 = 0;M5 = 0;M6 = 0;
+        fp = fopen("/home/po/set_conf.txt","r");
+        fscanf(fp,"%d %d %d %d %d %d %d",&D_Front,&D_Back,&D_Front_m2,&D_Back_m2,&Back_down,&Back_up,&Front_down);
+        fclose(fp);
+        
+        M_Dynamixel_position = D_Back;
+        M_Dynamixel_position_2 = D_Back_m2;
+
+
+
     ros::spin();
     
     

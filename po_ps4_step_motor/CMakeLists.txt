@@ -205,3 +205,5 @@ target_link_libraries(cmd_control_step ${catkin_LIBRARIES})
 add_executable(ps4_control_step_dynamixel src/ps4_control_step_dynamixel.cpp)
 target_link_libraries(ps4_control_step_dynamixel ${catkin_LIBRARIES})
 
+add_executable(control_center src/Control_Center.cpp)
+target_link_libraries(control_center ${catkin_LIBRARIES})
