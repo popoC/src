@@ -1,0 +1,29 @@
+<!-- ps4_control_step_dynamixel.launch-->
+<launch>
+ <!-- Arduino_Serial Node-->
+   <node  name="MCU_serial_node" pkg="rosserial_python" type="serial_node.py" >
+   <param name="port" value="/dev/ttyACM0"/>
+   <param name="baud" value="57600"/>
+   </node>
+   
+ <!-- joy node -->
+  <node  name="Joy_input_node" pkg="joy" type="joy_node"  respawn="true">
+  <param name="dev" type="string" value="/dev/input/js0" />
+  <param name="deadzone" value="0.12" />
+  </node>
+
+ <!-- Dynamixel -->
+
+ <node  name="Arm_control" pkg="po_dynamixel_2" type="po_control_2" required="true" output="screen">
+ <param name="device_name"              value="/dev/ttyUSB0"/>
+ <param name="baud_rate"                value="1000000"/>
+ <param name="scan_range"               value="6"/>
+ <param name="profile_velocity"         value="200"/>
+ <param name="profile_acceleration"     value="50"/>
+ </node>
+
+ <!-- Axes -->
+  <node  name="Control_center" pkg="po_ps4_step_motor" type="ThinkPad_Control_Center" output="screen">
+  </node>
+
+</launch>

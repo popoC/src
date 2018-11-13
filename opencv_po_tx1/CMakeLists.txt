@@ -144,6 +144,11 @@ target_link_libraries(demo_opencv_overlay
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+add_executable(ThinkPad_Cam src/ThinkPad_Cam.cpp)
+target_link_libraries(ThinkPad_Cam
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

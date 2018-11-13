@@ -207,3 +207,8 @@ target_link_libraries(ps4_control_step_dynamixel ${catkin_LIBRARIES})
 
 add_executable(control_center src/Control_Center.cpp)
 target_link_libraries(control_center ${catkin_LIBRARIES})
+
+add_executable(ThinkPad_Control_Center src/ThinkPad_Control_Center.cpp)
+target_link_libraries(ThinkPad_Control_Center ${catkin_LIBRARIES})
+
+
